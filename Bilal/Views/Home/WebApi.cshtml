@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "WebApi";
+}
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<h2>WebApiDemo</h2>
+<h2>Itenms</h2>
+<ul id="items"></ul>
+<br /><input type="text" id="indItem" value=" " />
+<input type="button" name="name" value="Search" onclick="find()" />
+<input type="button" name="Delete"  value="Delete Item" onclick="deletevalue()" />
+<p id="item"></p>
+@section scripts
+    {
+    @*@Scripts.Render("~/bundles/jquery");*@
+    <script>
+        $(document).ready(function () {
+            $.getJSON("/api/Values", function (data) {
+                $.each(data,function(key,val){
+                    var str=val;
+                    $('<li>',{text:str}).appendTo('#items');
+
+                });
+            })
+
+
+        });
+
+        function find() {
+            var ind = $('#indItem').val();
+          //  alert(ind);
+            $.getJSON("/api/Values/" + ind, function (data) {
+
+                var str = data;
+                $('#item').text(str);
+
+
+            })
+
+        }
+        function deletevalue() {
+            var ind = $('#indItem').val();
+            //  alert(ind);
+            $.ajax("/api/Values/" + ind,
+                {
+
+                    type:"DELETE",
+                    contentType:"application/json",
+                    dataType:"JSON",
+                    success: function (data) {
+                        alert('Deleted');
+
+                }
+            });
+
+        }
+    </script>
+}

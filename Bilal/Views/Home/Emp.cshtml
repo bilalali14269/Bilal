@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewBag.Title = "Emp";
+}
+
+<h2>EmpDemo</h2>
+<h2>All Employees</h2>
+<ul id="items"></ul>
+<br />
+<input type="text" name="name" id="empid" value=" " /><input type="button" name="btn" value="GetEmployee " onclick="getemployee()" /><input type="button" name="btn_delete" value="Delete Employee" onclick="DeleteEmployee()" />
+<br /><p id="item"></p>
+<h2>Add Employee</h2>
+Name : <input type="text" name="name" id="emp_name" value=" " /><br />
+Salary: <input type="text" name="name" id="emp_salary" value=" " /><br />
+Dateof Join<input type="text" name="name" id="emp_doj" value=" " /><br />
+<input type="button" name="name"  value="Add Employee " onclick="AddEmployee()" />
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+
+            getAllEmployees();
+        });
+        function getAllEmployees() {
+            $.getJSON("/api/Employee/",
+                function (data) {
+                    $("#items").text("");
+                    $.each(data, function (key, val) {
+
+                        var str = val.empid + " ," + val.empname + " ," + val.salary + " ," + val.isactive;
+                        $('<li>', { text: str }).appendTo($('#items'));
+
+                    })
+
+                }
+                )
+        }
+        function getemployee() {
+            var id = $("#empid").val();
+            $.getJSON("/api/Employee/" + id, function (val) {
+                var str = val.empid + " ," + val.empname + " ," + val.salary + " ," + val.isactive;
+                $("#item").text(str);
+
+            })
+
+        }
+        function DeleteEmployee() {
+            var ind = $('#empid').val();
+            //  alert(ind);
+            $.ajax("/api/Employee/" + ind,
+                {
+
+                    type: "DELETE",
+                    contentType: "application/json",
+                    dataType: "JSON",
+                    success: function (data) {
+                        //alert('Deleted');
+                        getAllEmployees();
+
+                    }
+                });
+
+        }
+
+        function AddEmployee() {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                url: "/api/Employee/",
+                data: JSON.stringify({
+                    empid: 0,
+                    empname: $("#emp_name").val(),
+                    salary: $("#emp_salary").val(),
+                    dateofjoin: $("#emp_doj").val(),
+                    isactive: true,
+                    deptid:1
+
+
+
+                }),
+                dataType: "JSON",
+                success: function (data) {
+                    getAllEmployees();
+                }
+
+            });
+
+        }
+    </script>
+}
